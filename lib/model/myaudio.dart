@@ -49,7 +49,6 @@ class MyAudio extends ChangeNotifier{
       isPaused = false;
       audioPlayer.resume();
     }
-    
   }
 
   stopAudio(){

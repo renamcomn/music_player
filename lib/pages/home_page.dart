@@ -18,11 +18,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  Map audioData = {
-    'image': 'https://i1.sndcdn.com/artworks-000477209964-6foytg-t500x500.jpg',
-    'url': 'http://brutkasten.io/sunshine.mp3'
-  };
-
   AudioCache audioCache = AudioCache();
   AudioPlayer audioPlayer = AudioPlayer();
 
