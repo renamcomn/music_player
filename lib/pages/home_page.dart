@@ -6,6 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:music_player/albumart.dart';
 import 'package:music_player/buttons.dart';
 import 'package:music_player/colors.dart';
+import 'package:music_player/navbar.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -89,7 +90,7 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-
+          NavigationBar(),
           AlbumArt(),
 
           Text(totalDuration.toString().split('.').first),
@@ -105,7 +106,7 @@ class _HomePageState extends State<HomePage> {
               ),
               GestureDetector(
                 onTap: () => playMusic(),
-                child: Buttons(icon: Icons.play_arrow,)
+                child: PlayControl(icon: Icons.play_arrow,)
               ),
               GestureDetector(
                 onTap: () => stopMusic(),
@@ -113,27 +114,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           )
-
-          
-
-          // TextButton(
-          //   onPressed: () { 
-          //     playMusic(); 
-          //   }, 
-          //   child: Text("Play")
-          // ),
-          // TextButton(
-          //   onPressed: () {
-          //     pauseMusic();
-          //   },
-          // child: Text("Pause")
-          // ),
-          // TextButton(
-          //   onPressed: () {
-          //     stopMusic();
-          //   }, 
-          // child: Text("Stop")
-          // ),
         ],
       ),
     );

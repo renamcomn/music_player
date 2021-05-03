@@ -10,7 +10,7 @@ class AlbumArt extends StatelessWidget {
         height: 260,
         width: 260,
         padding: EdgeInsets.all(12),
-        margin: EdgeInsets.symmetric(horizontal: 20,vertical: 40),
+        margin: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
         child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.asset('images/folder.jpg',fit: BoxFit.fill,)),
