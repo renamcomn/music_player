@@ -6,6 +6,7 @@ class MyAudio extends ChangeNotifier{
   Duration totalDuration = Duration();
   Duration position = Duration();
   String audioState = "Stopped";
+  bool isPaused = false;
 
   MyAudio(){
     initAudio();
@@ -41,7 +42,14 @@ class MyAudio extends ChangeNotifier{
 
 
   pauseAudio(){
-    audioPlayer.pause();
+    if(!isPaused) {
+      isPaused = true;
+      audioPlayer.pause();
+    } else {
+      isPaused = false;
+      audioPlayer.resume();
+    }
+    
   }
 
   stopAudio(){

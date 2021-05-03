@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:music_player/model/myaudio.dart';
 import 'package:music_player/pages/home_page.dart';
 import 'package:provider/provider.dart';
 
@@ -27,7 +28,10 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: ChangeNotifierProvider(
+        create: (_) => MyAudio(),
+        child: HomePage()
+      ),
     );
   }
 }

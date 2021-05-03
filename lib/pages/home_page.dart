@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:music_player/albumart.dart';
 import 'package:music_player/buttons.dart';
 import 'package:music_player/colors.dart';
+import 'package:music_player/model/myaudio.dart';
 import 'package:music_player/navbar.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -25,37 +28,12 @@ class _HomePageState extends State<HomePage> {
 
   Duration totalDuration = Duration();
   Duration position = Duration();
- String audioState = "Stopped";
+  String audioState = "Stopped";
 
-  initAudio() {
-    audioPlayer.onDurationChanged.listen((updatedDuration) {
-      setState(() {
-        totalDuration = updatedDuration;
-      });
-    });
+  double sliderValue = 0.0;
+  bool isPaused = false;
 
-    audioPlayer.onAudioPositionChanged.listen((updatedPosition) {
-      setState(() {
-        position = updatedPosition;
-      });
-    });
-
-    audioPlayer.onPlayerStateChanged.listen((playerState) { 
-      if(playerState == AudioPlayerState.STOPPED) {
-        audioState = "Stopped";
-      }
-      if(playerState == AudioPlayerState.PLAYING) {
-        audioState = "Playing";
-      }
-      if(playerState == AudioPlayerState.PAUSED) {
-        audioState = "Paused";
-      }
-
-      setState(() {
-        audioState = audioState;
-      });
-    });
-  }
+  String action = "";
 
 
   playMusic() async {
@@ -65,7 +43,17 @@ class _HomePageState extends State<HomePage> {
 
   pauseMusic() async {
     print("pause");
-    await audioPlayer.pause();
+    setState(() {
+      if(!isPaused) {
+        isPaused = true;
+        audioPlayer.pause();
+      } else {
+        isPaused = false;
+        audioPlayer.resume();
+      }
+      
+    });
+    
   }
 
   stopMusic() async {
@@ -73,9 +61,12 @@ class _HomePageState extends State<HomePage> {
     await audioPlayer.stop();
   }
 
+  seekMusic(Duration durationToSeek) async {
+    audioPlayer.seek(durationToSeek);
+  }
+
   void initState() {
     super.initState();
-    initAudio();
     if (Platform.isIOS) {
       audioCache.fixedPlayer?.startHeadlessService();
       audioPlayer.startHeadlessService();
@@ -92,26 +83,51 @@ class _HomePageState extends State<HomePage> {
         children: [
           NavigationBar(),
           AlbumArt(),
+          Text("Ain't No Sunshine (JØRD Remix)", style: TextStyle(color: darkPrimaryColor, fontSize: 18, fontWeight: FontWeight.w400),),
+          Column(
+            children: [
+              SliderTheme(
+                data: SliderThemeData(
+                  trackHeight: 5,
+                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5)
+                ),
+                  child: Consumer<MyAudio>(
+                    builder:(_,myAudioModel,child) =>
+                    Slider(
+                        value: myAudioModel.position==null? 0 : myAudioModel.position.inMilliseconds.toDouble(), 
+                        activeColor: darkPrimaryColor,
+                        inactiveColor: darkPrimaryColor.withOpacity(0.3),
+                        onChanged: (value) {
+                          myAudioModel.seekAudio(Duration(milliseconds: value.toInt()));
+                        },
+                        min: 0.0,
+                        max: myAudioModel.totalDuration==null? 20 : myAudioModel.totalDuration.inMilliseconds.toDouble(),
+                    ),
+                  ),
+              ),
+              Consumer<MyAudio>(
+                builder: (_,myAudioModel,child) =>
+                  Container(
+                  margin: EdgeInsets.symmetric(horizontal:20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      
+                      Text(myAudioModel.totalDuration.toString().split('.').first, style: TextStyle(color: darkPrimaryColor, fontWeight: FontWeight.w600),),
+                      Text(myAudioModel.position.toString().split('.').first, style: TextStyle(color: darkPrimaryColor, fontWeight: FontWeight.w600)),
 
-          Text(totalDuration.toString().split('.').first),
-          Text(position.toString().split('.').first),
-          Text(audioState.toString()),
-          
+                    ]
+                  ),
+                ),
+              )
+            ],
+          ),        
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              GestureDetector(
-                onTap: () => pauseMusic(),
-                child: Buttons(icon: Icons.pause,)
-              ),
-              GestureDetector(
-                onTap: () => playMusic(),
-                child: PlayControl(icon: Icons.play_arrow,)
-              ),
-              GestureDetector(
-                onTap: () => stopMusic(),
-                child: Buttons(icon: Icons.stop,)
-              ),
+              Buttons(icon: Icons.pause, action: "pause",),
+              PlayControl(icon: Icons.play_arrow,),
+              Buttons(icon: Icons.stop, action: "stop"),
             ],
           )
         ],

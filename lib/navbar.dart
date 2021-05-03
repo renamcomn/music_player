@@ -8,6 +8,7 @@ class NavigationBar extends StatelessWidget {
       height: 80,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
 
           NavBarItem(icon: Icons.arrow_back,),
